@@ -1,340 +1,1679 @@
 <!doctype html>
-<html lang="id">
+<html lang="id" data-bs-theme="light">
   <head>
+    <base target="_top" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>E-Learning Trigonometri: Aturan Sinus & Kosinus</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.geogebra.org/apps/deployggb.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
-      body {
-        font-family: "Inter", sans-serif;
-        font-size: 16px;
-        scroll-behavior: smooth;
+      @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap");
+
+      :root {
+        --primary: #4361ee;
+        --bg-body: #f4f7fe;
+        --bg-card: #ffffff;
+        --border: #edf2f7;
+        --text: #1a202c;
+        --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        --card-hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
       }
-      .math-card {
+
+      [data-bs-theme="dark"] {
+        --bg-body: #0b1120;
+        --bg-card: #151c2c;
+        --border: #2d3748;
+        --text: #f8f9fa;
+      }
+
+      body {
+        background-color: var(--bg-body);
+        color: var(--text);
+        font-family: "Plus Jakarta Sans", sans-serif;
+        transition: background 0.3s ease;
+      }
+
+      .card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        margin-bottom: 20px;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--card-hover-shadow);
+      }
+
+      .card-header {
+        background: transparent !important;
+        border-bottom: 1px solid var(--border) !important;
+        padding: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .header-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+      }
+
+      .kpi-card {
+        color: white !important;
+        border: none;
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        border-radius: 28px;
+      }
+      .kpi-card i.bg-icon {
+        position: absolute;
+        right: -10px;
+        bottom: -10px;
+        font-size: 5rem;
+        opacity: 0.15;
         transition: transform 0.3s ease;
       }
-      .math-card:hover {
-        transform: translateY(-5px);
+      .kpi-card:hover i.bg-icon {
+        transform: scale(1.2) rotate(-10deg);
+      }
+
+      .bg-grad-in {
+        background: linear-gradient(135deg, #10b981, #34d399);
+      }
+      .bg-grad-out {
+        background: linear-gradient(135deg, #ef4444, #fb7185);
+      }
+      .bg-grad-bal {
+        background: linear-gradient(135deg, #4361ee, #7b61ff);
+      }
+      .bg-grad-trx {
+        background: linear-gradient(135deg, #f59e0b, #fbbf24);
+      }
+
+      .chart-container {
+        height: 300px;
+        position: relative;
+        padding: 15px;
+      }
+      .chart-title {
+        font-weight: 800;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        margin: 0;
+        letter-spacing: 1px;
+        color: var(--text);
+        opacity: 0.8;
+      }
+
+      .fab-container {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        z-index: 1000;
+      }
+      .fab-btn {
+        width: 60px;
+        height: 60px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: white;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .fab-btn:hover {
+        transform: scale(1.1);
+      }
+      .fab-add {
+        background: var(--primary);
+      }
+      .fab-pdf {
+        background: #e11d48;
+      }
+
+      .insight-pill {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 18px;
+        border-radius: 22px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        height: 100%;
+        transition: all 0.3s ease;
+      }
+      .insight-pill:hover {
+        border-color: var(--primary);
+        background: rgba(67, 97, 238, 0.02);
+      }
+
+      .health-badge {
+        padding: 10px 24px;
+        border-radius: 50px;
+        font-weight: 800;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+      }
+
+      #loadingOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        z-index: 2000;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        backdrop-filter: blur(8px);
+      }
+
+      .top-expense-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px dashed var(--border);
+      }
+
+      /* PDF Report Styles (Sesuai Gambar) */
+      .report-only {
+        display: none;
+      }
+      .pdf-mode {
+        background: #f1f5f9 !important;
+        padding: 40px !important;
+        width: 1000px !important;
+      }
+      .pdf-mode .report-only {
+        display: block;
+      }
+      .pdf-mode .dashboard-only {
+        display: none !important;
+      }
+      .pdf-mode .card {
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+      }
+
+      .report-header {
+        background: #1e3a8a;
+        color: white;
+        padding: 30px;
+        border-radius: 12px 12px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .report-body {
+        background: white;
+        padding: 50px;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+      }
+      .report-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      .report-table th {
+        background: #1e293b;
+        color: white;
+        padding: 12px;
+        text-align: left;
+        font-size: 11px;
+        text-transform: uppercase;
+      }
+      .report-table td {
+        padding: 12px;
+        border: 1px solid #e2e8f0;
+        font-size: 12px;
+      }
+      .summary-box {
+        background: #f8fafc;
+        border: 2px solid #1e3a8a;
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+      /* Posisi Container Tombol */
+      .fab-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column-reverse; /* Mengatur urutan dari bawah ke atas */
+        gap: 15px;
+        z-index: 1050;
+      }
+
+      /* Styling Tombol AI agar seragam dengan tombol Anda */
+      .fab-ai {
+        background-color: #8b5cf6 !important; /* Warna Ungu AI */
+        color: white !important;
+      }
+
+      /* Container Utama Jendela Chat */
+      .chat-window {
+        position: fixed;
+        bottom: 240px; /* Di atas tumpukan 3 tombol */
+        right: 20px;
+        width: 320px;
+        height: 420px;
+        background-color: white;
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        z-index: 1100;
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      /* Header Chat */
+      .chat-header-custom {
+        background-color: #3b82f6;
+        color: white;
+        padding: 15px;
+        font-weight: bold;
+        font-size: 0.8rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      /* Area Pesan */
+      .chat-body-custom {
+        flex: 1;
+        padding: 15px;
+        background-color: #f8fafc;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      /* Bubble Chat */
+      .msg-bot,
+      .msg-user {
+        padding: 8px 12px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        max-width: 85%;
+      }
+
+      .msg-bot {
+        background-color: white;
+        align-self: flex-start;
+        border: 1px solid #e2e8f0;
+      }
+
+      .msg-user {
+        background-color: #3b82f6;
+        color: white;
+        align-self: flex-end;
+      }
+
+      /* Input Footer */
+      .chat-footer-custom {
+        padding: 12px;
+        background-color: white;
+        border-top: 1px solid #eee;
+      }
+
+      .chat-footer-custom input {
+        width: 100%;
+        border: none;
+        background-color: #f1f5f9;
+        padding: 10px 15px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        outline: none;
+      }
+
+      /* Dark Mode Support (Otomatis) */
+      [data-bs-theme="dark"] .chat-window {
+        background-color: #1e293b;
+        border-color: #334155;
+      }
+      [data-bs-theme="dark"] .chat-body-custom {
+        background-color: #0f172a;
+      }
+      [data-bs-theme="dark"] .msg-bot {
+        background-color: #1e293b;
+        color: white;
+        border-color: #334155;
+      }
+      [data-bs-theme="dark"] .chat-footer-custom {
+        background-color: #1e293b;
       }
     </style>
   </head>
-  <body class="bg-slate-50 text-slate-800">
-    <!-- Navigasi -->
-    <nav class="bg-indigo-700 text-white sticky top-0 z-50 shadow-md">
+  <body id="mainContent">
+    <div id="loadingOverlay">
       <div
-        class="container mx-auto px-4 py-3 flex justify-between items-center"
-      >
-        <h1 class="font-bold text-xl tracking-tight">
-          TrigoMath <span class="text-indigo-200">Pro</span>
-        </h1>
-        <div class="hidden md:flex space-x-6 font-medium">
-          <a href="#beranda" class="hover:text-indigo-200 transition"
-            >Beranda</a
+        class="spinner-border text-primary mb-3"
+        style="width: 3rem; height: 3rem"
+      ></div>
+      <div class="fw-bold h5">Sedang Memproses...</div>
+    </div>
+
+    <!-- Header Normal -->
+    <nav
+      class="navbar sticky-top py-3 border-bottom shadow-sm dashboard-only"
+      style="background-color: var(--bg-card)"
+    >
+      <div class="container d-flex justify-content-between align-items-center">
+        <span
+          class="navbar-brand fw-bold text-primary fs-4 m-0 d-flex align-items-center"
+        >
+          <div
+            class="bg-primary text-white rounded-3 p-2 me-2 shadow-sm"
+            style="line-height: 1"
           >
-          <a href="#konsep" class="hover:text-indigo-200 transition">Konsep</a>
-          <a href="#latihan" class="hover:text-indigo-200 transition"
-            >Latihan</a
+            <i class="bi bi-intersect"></i>
+          </div>
+          AJI FINANCE
+        </span>
+        <div class="d-flex align-items-center gap-3">
+          <div
+            id="themeToggle"
+            style="cursor: pointer"
+            class="fs-4 text-primary"
           >
-          <a href="#asesmen" class="hover:text-indigo-200 transition"
-            >Asesmen</a
-          >
-        </div>
-        <button class="md:hidden p-2" onclick="toggleMenu()">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6h16M4 12h16m-7 6h7"
+            <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+          </div>
+          <div class="d-flex gap-2 bg-light p-1 rounded-pill px-2 border">
+            <select
+              id="selMonth"
+              class="form-select form-select-sm border-0 bg-transparent fw-bold"
+              onchange="loadDashboard()"
+            ></select>
+            <input
+              type="number"
+              id="selYear"
+              class="form-control form-control-sm border-0 bg-transparent fw-bold"
+              style="width: 80px"
+              onchange="loadDashboard()"
             />
-          </svg>
-        </button>
+          </div>
+        </div>
       </div>
     </nav>
 
-    <!-- Section 1: Beranda -->
-    <section
-      id="beranda"
-      class="min-h-screen flex flex-col items-center justify-center text-center px-4 py-20 bg-gradient-to-b from-indigo-700 to-indigo-900 text-white"
-    >
-      <h2 class="text-4xl md:text-6xl font-bold mb-6">
-        Kuasai Aturan Sinus & Kosinus
-      </h2>
-      <p class="text-lg md:text-xl max-w-2xl mb-10 text-indigo-100">
-        Pecahkan misteri segitiga sembarang dan terapkan dalam masalah navigasi
-        hingga konstruksi dengan simulasi interaktif.
-      </p>
-
-      <div
-        class="w-full max-w-3xl aspect-video rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20"
-      >
-        <!-- Video Pengantar (Placeholder) -->
-        <iframe
-          class="w-full h-full"
-          src="https://www.youtube.com/embed/h5HoV7mDXSg?si=FFxbX7L6SGOZO-6w"
-          title="Video Pengantar"
-          frameborder="0"
-          allow="
-            accelerometer;
-            autoplay;
-            clipboard-write;
-            encrypted-media;
-            gyroscope;
-            picture-in-picture;
-          "
-          allowfullscreen
-        ></iframe>
-      </div>
-    </section>
-
-    <!-- Section 2: Konsep (Materi Interaktif) -->
-    <section id="konsep" class="container mx-auto px-4 py-20">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl font-bold text-indigo-900 mb-4">
-          Eksplorasi Konsep
-        </h2>
-        <p class="text-slate-600">
-          Gunakan simulasi di bawah ini untuk memahami hubungan sisi dan sudut.
-        </p>
-      </div>
-
-      <div class="grid md:grid-cols-2 gap-12 items-start">
-        <!-- Applet GeoGebra -->
-        <div class="bg-white p-4 rounded-xl shadow-lg border border-slate-200">
-          <div id="ggb-element" class="w-full"></div>
-          <p class="mt-4 text-sm text-slate-500 italic text-center">
-            Tips: Tarik titik-titik sudut untuk mengubah bentuk segitiga.
+    <!-- TAMPILAN LAPORAN PDF (Sesuai Gambar) -->
+    <div class="report-only container-fluid p-0">
+      <div class="report-header">
+        <div>
+          <h3 class="fw-black m-0 tracking-tighter italic">AJI FINANCE PRO</h3>
+          <p class="small opacity-75 m-0 uppercase tracking-widest">
+            Financial Analytics Report
           </p>
         </div>
+        <div class="text-end">
+          <div class="badge bg-danger px-3 py-2 fw-bold">DOKUMEN RESMI</div>
+        </div>
+      </div>
+      <div class="report-body">
+        <div class="row mb-5">
+          <div class="col-6">
+            <h5 class="fw-bold text-dark border-bottom pb-2">DATA PENGGUNA</h5>
+            <p class="m-0 small"><b>Nama:</b> Aji Finance User</p>
+            <p class="m-0 small">
+              <b>Periode:</b> <span id="pdfMonthLabel">Maret 2026</span>
+            </p>
+            <p class="m-0 small"><b>Lokasi:</b> Indonesia</p>
+          </div>
+          <div class="col-6 text-end">
+            <h5 class="fw-bold text-dark border-bottom pb-2">TANGGAL CETAK</h5>
+            <p class="m-0 small" id="pdfPrintDate">04 Maret 2026</p>
+            <p class="m-0 small">System ID: AF-992011</p>
+          </div>
+        </div>
 
-        <!-- Rumus & Penjelasan -->
-        <div class="space-y-6">
+        <div class="summary-box">
+          <div class="row text-center">
+            <div class="col-3 border-end">
+              <div class="small fw-bold text-muted">TOTAL MASUK</div>
+              <div class="h5 fw-black text-success" id="pdfIn">Rp 0</div>
+            </div>
+            <div class="col-3 border-end">
+              <div class="small fw-bold text-muted">TOTAL KELUAR</div>
+              <div class="h5 fw-black text-danger" id="pdfOut">Rp 0</div>
+            </div>
+            <div class="col-3 border-end">
+              <div class="small fw-bold text-muted">SALDO AKHIR</div>
+              <div class="h5 fw-black text-primary" id="pdfSaldo">Rp 0</div>
+            </div>
+            <div class="col-3">
+              <div class="small fw-bold text-muted">LIMIT BULANAN</div>
+              <div class="h5 fw-black text-dark" id="pdfLimit">Rp 0</div>
+            </div>
+          </div>
+        </div>
+
+        <h6 class="fw-bold text-dark uppercase mb-3">
+          <i class="bi bi-list-check me-2"></i>Rincian Transaksi Arus Kas
+        </h6>
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>Tgl</th>
+              <th>Keterangan</th>
+              <th>Kategori</th>
+              <th>Status</th>
+              <th class="text-end">Jumlah</th>
+            </tr>
+          </thead>
+          <tbody id="pdfTableBody"></tbody>
+        </table>
+
+        <div class="mt-5 pt-5 text-center border-top">
+          <p class="small text-muted italic">
+            Dicetak secara otomatis oleh sistem Aji Finance Pro. Data ini valid
+            secara akumulasi sistem.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- KONTEN DASHBOARD (Normal) -->
+    <div class="container pt-4 pb-5 dashboard-only">
+      <!-- KPI Row -->
+      <div class="row g-4 mb-4">
+        <div class="col-6 col-md-3">
+          <div class="card kpi-card bg-grad-in h-100 shadow-lg">
+            <i class="bi bi-graph-up-arrow bg-icon"></i>
+            <div class="small fw-bold opacity-75 tracking-widest">
+              PEMASUKAN
+            </div>
+            <h3 id="kpiIn" class="m-0 fw-black mt-1 italic tracking-tighter">
+              Rp 0
+            </h3>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card kpi-card bg-grad-out h-100 shadow-lg">
+            <i class="bi bi-graph-down-arrow bg-icon"></i>
+            <div class="small fw-bold opacity-75 tracking-widest">
+              PENGELUARAN
+            </div>
+            <h3 id="kpiOut" class="m-0 fw-black mt-1 italic tracking-tighter">
+              Rp 0
+            </h3>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card kpi-card bg-grad-bal h-100 shadow-lg">
+            <i class="bi bi-safe2 bg-icon"></i>
+            <div class="small fw-bold opacity-75 tracking-widest">SALDO</div>
+            <h3 id="kpiSaldo" class="m-0 fw-black mt-1 italic tracking-tighter">
+              Rp 0
+            </h3>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card kpi-card bg-grad-trx h-100 shadow-lg">
+            <i class="bi bi-activity bg-icon"></i>
+            <div class="small fw-bold opacity-75 tracking-widest">
+              AKTIVITAS
+            </div>
+            <h3 id="kpiCount" class="m-0 fw-black mt-1 italic tracking-tighter">
+              0
+            </h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4 mb-4">
+        <div class="col-md-8">
           <div
-            class="math-card bg-white p-6 rounded-xl shadow-md border-l-4 border-indigo-500"
+            class="card p-4 h-100 border-0 shadow-sm border-start border-primary border-5"
           >
-            <h3 class="text-xl font-bold mb-3">Aturan Sinus</h3>
-            <p class="mb-4">
-              Digunakan ketika diketahui pasangan sisi-sudut yang berhadapan.
-            </p>
-            <div class="bg-slate-100 p-4 rounded text-center font-mono text-lg">
-              a / sin(A) = b / sin(B) = c / sin(C)
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div class="d-flex align-items-center">
+                <div
+                  class="header-icon bg-primary-subtle text-primary me-3 shadow-sm"
+                >
+                  <i class="bi bi-bullseye"></i>
+                </div>
+                <div>
+                  <div class="fw-black small text-uppercase tracking-wider">
+                    Batas Target Budget
+                  </div>
+                  <button
+                    class="btn btn-sm p-0 text-primary fw-bold small text-decoration-underline"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalTarget"
+                  >
+                    Ubah Limit
+                  </button>
+                </div>
+              </div>
+              <div class="text-end">
+                <span
+                  class="fw-black h3 m-0 text-primary italic"
+                  id="goalPercent"
+                  >0%</span
+                >
+              </div>
+            </div>
+            <div
+              class="progress mb-3"
+              style="
+                height: 18px;
+                border-radius: 50px;
+                background: #f1f5f9;
+                padding: 4px;
+              "
+            >
+              <div
+                id="goalBar"
+                class="progress-bar progress-bar-striped progress-bar-animated rounded-pill shadow-sm"
+                role="progressbar"
+                style="width: 0%"
+              ></div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="small fw-bold text-muted">
+                Limit Saat Ini:
+                <b id="goalTargetDisplay" class="text-dark">Rp 0</b>
+              </div>
+              <div
+                id="goalStatusLabel"
+                class="badge rounded-pill bg-success-subtle text-success px-3 py-2 fw-black"
+              >
+                BUDGET AMAN
+              </div>
             </div>
           </div>
-
+        </div>
+        <div class="col-md-4">
           <div
-            class="math-card bg-white p-6 rounded-xl shadow-md border-l-4 border-emerald-500"
+            class="card h-100 p-4 text-center d-flex flex-column align-items-center justify-content-center border-0 shadow-sm"
           >
-            <h3 class="text-xl font-bold mb-3">Aturan Kosinus</h3>
-            <p class="mb-4">
-              Digunakan ketika diketahui dua sisi dan satu sudut yang diapit
-              (SAS).
-            </p>
-            <div class="bg-slate-100 p-4 rounded text-center font-mono text-lg">
-              a² = b² + c² - 2bc cos(A)
+            <div
+              class="header-icon bg-info-subtle text-info mb-3 shadow-sm"
+              style="
+                width: 60px;
+                height: 60px;
+                font-size: 2rem;
+                border-radius: 20px;
+              "
+            >
+              <i class="bi bi-shield-lock-fill"></i>
+            </div>
+            <div
+              class="small fw-black text-muted text-uppercase tracking-widest mb-1"
+            >
+              Status Kesehatan
+            </div>
+            <div
+              id="healthBadge"
+              class="health-badge bg-light text-muted uppercase"
+            >
+              Processing...
             </div>
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- Section 3: Latihan (Worked Example) -->
-    <section id="latihan" class="bg-slate-100 py-20">
-      <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center text-indigo-900 mb-12">
-          Latihan Terbimbing
-        </h2>
-        <div
-          class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden"
-        >
-          <div class="p-8">
-            <span
-              class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm font-bold uppercase"
-              >Studi Kasus</span
-            >
-            <h4 class="text-2xl font-bold mt-4 mb-6">Menghitung Jarak Kapal</h4>
-            <p class="text-slate-600 mb-6">
-              Kapal A dan B berangkat dari pelabuhan P. Kapal A berlayar 10 km,
-              Kapal B berlayar 15 km. Sudut antara jalur keduanya adalah 60°.
-              Berapakah jarak antara kedua kapal tersebut?
-            </p>
-            <div class="space-y-4">
-              <button
-                onclick="toggleStep('step1')"
-                class="w-full text-left p-4 bg-slate-50 rounded-lg border hover:border-indigo-300 font-semibold flex justify-between"
-              >
-                Langkah 1: Identifikasi Komponen <span>+</span>
-              </button>
-              <div id="step1" class="hidden p-4 text-slate-700">
-                Diketahui: b = 10, c = 15, Sudut A = 60°. Ini adalah kasus
-                Sisi-Sudut-Sisi (SAS).
+      <div class="row g-4 mb-4">
+        <div class="col-12">
+          <div class="card p-4 border-0 shadow-sm">
+            <div class="d-flex align-items-center mb-4">
+              <div class="header-icon bg-warning text-white me-3 shadow-lg">
+                <i class="bi bi-lightning-charge-fill"></i>
               </div>
+              <h6 class="fw-black m-0 tracking-widest text-uppercase">
+                AI Smart Financial Insights
+              </h6>
+            </div>
+            <div id="aiInsights" class="row g-4"></div>
+          </div>
+        </div>
+      </div>
 
-              <button
-                onclick="toggleStep('step2')"
-                class="w-full text-left p-4 bg-slate-50 rounded-lg border hover:border-indigo-300 font-semibold flex justify-between"
-              >
-                Langkah 2: Pilih Rumus <span>+</span>
-              </button>
-              <div id="step2" class="hidden p-4 text-slate-700">
-                Gunakan Aturan Kosinus: a² = b² + c² - 2bc cos(A).
+      <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-header">
+              <div class="header-icon bg-primary text-white me-2 shadow-sm">
+                <i class="bi bi-bezier2"></i>
               </div>
+              <h6 class="chart-title">Analisis Tren & Arus Kas Harian</h6>
+            </div>
+            <div class="chart-container"><canvas id="lineChart"></canvas></div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-header">
+              <div class="header-icon bg-danger text-white me-2 shadow-sm">
+                <i class="bi bi-sort-numeric-down"></i>
+              </div>
+              <h6 class="chart-title">Top 10 Pengeluaran Tertinggi</h6>
+            </div>
+            <div class="p-4" id="topExpensesList"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-header">
+              <div class="header-icon bg-success text-white me-2 shadow-sm">
+                <i class="bi bi-columns-gap"></i>
+              </div>
+              <h6 class="chart-title">Visualisasi Riwayat Arus Kas 6 Bulan</h6>
+            </div>
+            <div class="chart-container">
+              <canvas id="historyChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-header">
+              <div class="header-icon bg-info text-white me-2 shadow-sm">
+                <i class="bi bi-pie-chart-fill"></i>
+              </div>
+              <h6 class="chart-title">Distribusi Pengeluaran Kategori</h6>
+            </div>
+            <div class="chart-container">
+              <canvas id="pieCategory"></canvas>
             </div>
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- Section 4: Asesmen (Kuis) -->
-    <section id="asesmen" class="container mx-auto px-4 py-20">
-      <div class="max-w-2xl mx-auto">
-        <h2 class="text-3xl font-bold text-center text-indigo-900 mb-12">
-          Uji Kemampuan
-        </h2>
-        <div
-          id="quiz-container"
-          class="bg-white p-8 rounded-2xl shadow-lg border border-slate-200"
-        >
-          <!-- Pertanyaan akan di-render via JS -->
-          <div id="question-area">
-            <p id="q-text" class="text-lg font-semibold mb-6">
-              Memuat pertanyaan...
-            </p>
-            <div id="options" class="space-y-3"></div>
-          </div>
-          <div id="result-area" class="hidden text-center">
-            <h3 class="text-2xl font-bold mb-4">Selesai!</h3>
-            <p id="score-text" class="text-xl mb-6"></p>
-            <button
-              onclick="restartQuiz()"
-              class="bg-indigo-600 text-white px-8 py-3 rounded-xl hover:bg-indigo-700"
+      <div class="row g-4">
+        <div class="col-lg-12">
+          <div class="card border-0 shadow-sm overflow-hidden">
+            <div
+              class="card-header d-flex justify-content-between align-items-center bg-white"
             >
-              Ulangi Kuis
-            </button>
+              <div class="d-flex align-items-center">
+                <div class="header-icon bg-dark text-white me-3 shadow-sm">
+                  <i class="bi bi-journal-text"></i>
+                </div>
+                <h6 class="chart-title">Log Aktivitas Transaksi Terkini</h6>
+              </div>
+              <span
+                class="badge bg-primary rounded-pill px-3 py-2 fw-bold"
+                id="recentCount"
+                >Live</span
+              >
+            </div>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                  <tr
+                    class="small fw-black text-muted uppercase"
+                    style="font-size: 0.7rem; letter-spacing: 1px"
+                  >
+                    <th class="px-4 py-3">Tanggal</th>
+                    <th class="py-3">Keterangan</th>
+                    <th class="py-3">Kategori</th>
+                    <th class="py-3">Tipe</th>
+                    <th class="px-4 py-3 text-end">Jumlah</th>
+                  </tr>
+                </thead>
+                <tbody id="recentList" class="small fw-bold"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+    <footer class="bg-body py-4">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 text-center">
+            <p class="text-body-secondary small mb-2">
+              © 2026 Smart Financial Assistant. All rights reserved.
+            </p>
+            <p class="text-body-secondary small mb-3">Copyright by ~az~</p>
 
-    <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 py-12">
-      <div class="container mx-auto px-4 text-center">
-        <p class="mb-4">&copy; 2026 Aji Nur Rizal - Universitas Siliwangi</p>
-        <div class="flex justify-center space-x-6 text-sm">
-          <span>Trigonometri</span>
-          <span>Fase F</span>
-          <span>Matematika SMA</span>
+            <div class="d-flex justify-content-center gap-3">
+              <a
+                href="https://github.com/ajinurrizal1-wq"
+                class="link-body-emphasis"
+                target="_blank"
+              >
+                <i class="bi bi-github"></i>
+              </a>
+              <a
+                href="https://www.tiktok.com/@__a_n_r__?is_from_webapp=1&sender_device=pc"
+                class="link-body-emphasis"
+                target="_blank"
+                title="TikTok"
+              >
+                <i class="bi bi-tiktok"></i>
+              </a>
+              <a
+                href="https://www.instagram.com/noorrizalaji?igsh=MXRqMXA5NWw0ZWMzbQ=="
+                class="link-body-emphasis"
+                target="_blank"
+              >
+                <i class="bi bi-instagram"></i>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
 
-    <script>
-      // Inisialisasi GeoGebra
-      var params = {
-        appName: "geometry",
-        width: 600,
-        height: 400,
-        showToolBar: false,
-        showAlgebraInput: false,
-        showMenuBar: false,
-        enableRightClick: false,
-        material_id: "vmfmzybe", // Contoh material ID Aturan Sinus
-      };
-      var ggbApp = new GGBApplet(params, true);
-      window.onload = function () {
-        ggbApp.inject("ggb-element");
-        renderQuestion();
-      };
+    <div class="fab-container">
+      <button
+        class="fab-btn fab-pdf shadow-lg"
+        onclick="exportToPDF()"
+        title="Cetak Laporan"
+      >
+        <i class="bi bi-printer-fill"></i>
+      </button>
+      <button
+        class="fab-btn fab-add shadow-lg"
+        data-bs-toggle="modal"
+        data-bs-target="#modalAdd"
+        title="Tambah Data"
+      >
+        <i class="bi bi-plus-lg"></i>
+      </button>
+    </div>
 
-      // Fungsi UI
-      function toggleStep(id) {
-        document.getElementById(id).classList.toggle("hidden");
+    <!-- Modal Add -->
+    <div class="modal fade" id="modalAdd" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow-lg">
+          <div class="modal-header border-0 pb-0 px-4 pt-4">
+            <h5 class="fw-black italic text-primary">INPUT DATA BARU</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <form id="formTrans" onsubmit="handleFormSubmit(event)">
+              <div
+                class="mb-4 btn-group w-100 p-1 bg-light rounded-pill border"
+              >
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="tipe"
+                  id="tOut"
+                  value="Pengeluaran"
+                  checked
+                />
+                <label
+                  class="btn btn-outline-danger border-0 rounded-pill w-50 fw-black small"
+                  for="tOut"
+                  >KELUAR</label
+                >
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="tipe"
+                  id="tIn"
+                  value="Pemasukan"
+                />
+                <label
+                  class="btn btn-outline-success border-0 rounded-pill w-50 fw-black small"
+                  for="tIn"
+                  >MASUK</label
+                >
+              </div>
+              <div class="mb-3">
+                <label class="small fw-bold mb-1 opacity-50">TANGGAL</label>
+                <input
+                  type="date"
+                  name="tanggal"
+                  id="formTgl"
+                  class="form-control rounded-3"
+                  required
+                />
+              </div>
+              <div class="row g-3 mb-3">
+                <div class="col-6">
+                  <label class="small fw-bold mb-1 opacity-50">KATEGORI</label>
+                  <select name="kategori" class="form-select rounded-3">
+                    <option>Makanan</option>
+                    <option>PLP</option>
+                    <option>Bekal</option>
+                    <option>Tagihan</option>
+                    <option>Hiburan</option>
+                    <option>Belanja</option>
+                    <option>Kesehatan</option>
+                    <option>Kesehatan</option>
+                    <option>Lainnya</option>
+                  </select>
+                </div>
+                <div class="col-6">
+                  <label class="small fw-bold mb-1 opacity-50"
+                    >KETERANGAN</label
+                  >
+                  <input
+                    type="text"
+                    name="subKategori"
+                    class="form-control rounded-3"
+                    placeholder="..."
+                    required
+                  />
+                </div>
+              </div>
+              <div class="mb-4">
+                <label class="small fw-bold mb-1 opacity-50"
+                  >NOMINAL (RP)</label
+                >
+                <input
+                  type="number"
+                  name="jumlah"
+                  class="form-control form-control-lg fw-black text-primary border-0 bg-light p-3 rounded-4"
+                  placeholder="0"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                class="btn btn-primary w-100 py-3 fw-black rounded-4 shadow-lg tracking-widest uppercase"
+              >
+                SIMPAN DATA
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="chatBox" class="chat-window shadow-lg d-none">
+      <div class="chat-header-custom">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-robot"></i>
+          <span>ASISTEN AI KEUANGAN</span>
+        </div>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          onclick="toggleChat()"
+        ></button>
+      </div>
+
+      <div id="chatMessages" class="chat-body-custom">
+        <div class="msg-bot">
+          Halo! Saya asisten AI Aji Finance. Ada yang bisa saya bantu terkait
+          data keuangan Anda?
+        </div>
+      </div>
+
+      <div class="chat-footer-custom">
+        <input
+          type="text"
+          id="userInput"
+          placeholder="Tanya pengeluaran saya..."
+          onkeypress="handleChatKey(event)"
+        />
+      </div>
+    </div>
+
+    <div class="fab-container">
+      <button
+        class="fab-btn fab-ai shadow-lg"
+        onclick="toggleChat()"
+        title="Tanya AI"
+      >
+        <i class="bi bi-chat-dots-fill"></i>
+      </button>
+
+      <button
+        class="fab-btn fab-pdf shadow-lg"
+        onclick="exportToPDF()"
+        title="Cetak Laporan"
+      >
+        <i class="bi bi-printer-fill"></i>
+      </button>
+
+      <button
+        class="fab-btn fab-add shadow-lg"
+        data-bs-toggle="modal"
+        data-bs-target="#modalAdd"
+        title="Tambah Data"
+      >
+        <i class="bi bi-plus-lg"></i>
+      </button>
+    </div>
+
+    <!-- Modal Target -->
+    <div class="modal fade" id="modalTarget" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 rounded-4 shadow-lg">
+          <div class="modal-header border-0 pb-0">
+            <h6 class="fw-black text-danger italic">SET TARGET BUDGET</h6>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body p-4 text-center">
+            <input
+              type="number"
+              id="inputTargetVal"
+              class="form-control form-control-lg fw-black text-center mb-4 rounded-4"
+              placeholder="Rp ..."
+            />
+            <button
+              onclick="saveTarget()"
+              class="btn btn-danger w-100 py-3 rounded-4 fw-black"
+            >
+              SIMPAN LIMIT
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script>
+      let charts = {};
+      const html = document.documentElement;
+      let targetPengeluaran =
+        parseInt(localStorage.getItem("aji_exp_limit")) || 5000000;
+      let currentRawData = null;
+
+      function formatIDR(v) {
+        return new Intl.NumberFormat("id-ID", {
+          style: "currency",
+          currency: "IDR",
+          maximumFractionDigits: 0,
+        }).format(v);
       }
 
-      // Logika Kuis
-      const questions = [
-        {
-          q: "Aturan manakah yang paling tepat digunakan jika diketahui Sisi-Sisi-Sisi (SSS)?",
-          options: [
-            "Aturan Sinus",
-            "Aturan Kosinus",
-            "Teorema Pythagoras",
-            "Luas Segitiga",
+      function saveTarget() {
+        const val = document.getElementById("inputTargetVal").value;
+        if (val) {
+          targetPengeluaran = parseInt(val);
+          localStorage.setItem("aji_exp_limit", val);
+          bootstrap.Modal.getInstance(
+            document.getElementById("modalTarget"),
+          ).hide();
+          loadDashboard();
+        }
+      }
+
+      async function handleFormSubmit(e) {
+        e.preventDefault();
+        document.getElementById("loadingOverlay").style.display = "flex";
+        const form = e.target;
+        const formData = {
+          tipe: form.tipe.value,
+          tanggal: form.tanggal.value,
+          kategori: form.kategori.value,
+          subKategori: form.subKategori.value,
+          jumlah: form.jumlah.value,
+        };
+
+        if (typeof google !== "undefined" && google.script?.run) {
+          google.script.run
+            .withSuccessHandler(() => {
+              document.getElementById("loadingOverlay").style.display = "none";
+              bootstrap.Modal.getInstance(
+                document.getElementById("modalAdd"),
+              ).hide();
+              form.reset();
+              document.getElementById("formTgl").valueAsDate = new Date();
+              loadDashboard();
+            })
+            .saveTransaction(formData);
+        } else {
+          // Fallback demo mode
+          setTimeout(() => {
+            document.getElementById("loadingOverlay").style.display = "none";
+            bootstrap.Modal.getInstance(
+              document.getElementById("modalAdd"),
+            ).hide();
+            alert("Berhasil disimpan (Demo Mode)");
+          }, 1000);
+        }
+      }
+
+      function applyTheme(t) {
+        html.setAttribute("data-bs-theme", t);
+        localStorage.setItem("aji_theme", t);
+        document.getElementById("themeIcon").className =
+          t === "dark" ? "bi bi-sun-fill" : "bi bi-moon-stars-fill";
+        loadDashboard();
+      }
+
+      document.getElementById("themeToggle").onclick = () =>
+        applyTheme(
+          html.getAttribute("data-bs-theme") === "light" ? "dark" : "light",
+        );
+
+      function loadDashboard() {
+        const m = document.getElementById("selMonth").value;
+        const y = document.getElementById("selYear").value;
+        if (typeof google !== "undefined" && google.script?.run) {
+          google.script.run.withSuccessHandler(render).getDashboardData(m, y);
+        } else {
+          // Render dummy data if not in Apps Script
+          render({
+            kpi: { in: 316000, out: 173000, count: 12, prevOut: 150000 },
+            dailyIn: { 4: 200000, 5: 116000 },
+            dailyOut: { 3: 19000, 4: 99000, 5: 55000 },
+            category: {
+              Makanan: 80000,
+              Belanja: 50000,
+              Transportasi: 11000,
+              Lainnya: 32000,
+            },
+            recent: [
+              {
+                tgl: "04/03/2026",
+                sub: "Gaji Pokok",
+                cat: "Gaji",
+                tipe: "Pemasukan",
+                val: 200000,
+              },
+              {
+                tgl: "04/03/2026",
+                sub: "Beli Makan Siang",
+                cat: "Makanan",
+                tipe: "Pengeluaran",
+                val: 50000,
+              },
+              {
+                tgl: "03/03/2026",
+                sub: "Beli Pulsa",
+                cat: "Belanja",
+                tipe: "Pengeluaran",
+                val: 50000,
+              },
+            ],
+            history: [
+              { label: "Jan", in: 900000, out: 800000 },
+              { label: "Feb", in: 1200000, out: 1100000 },
+              { label: "Mar", in: 316000, out: 173000 },
+            ],
+          });
+        }
+      }
+
+      function render(data) {
+        currentRawData = data;
+        const isDark = html.getAttribute("data-bs-theme") === "dark";
+        const textColor = isDark ? "#a0aec0" : "#1e293b";
+        const gridColor = isDark ? "#2d3748" : "#f1f5f9";
+
+        document.getElementById("kpiIn").innerText = formatIDR(data.kpi.in);
+        document.getElementById("kpiOut").innerText = formatIDR(data.kpi.out);
+        document.getElementById("kpiSaldo").innerText = formatIDR(
+          data.kpi.in - data.kpi.out,
+        );
+        document.getElementById("kpiCount").innerText = data.kpi.count;
+
+        // Target Logic
+        document.getElementById("goalTargetDisplay").innerText =
+          formatIDR(targetPengeluaran);
+        const expPercent = ((data.kpi.out / targetPengeluaran) * 100).toFixed(
+          1,
+        );
+        const percentDisplay = document.getElementById("goalPercent");
+        const bar = document.getElementById("goalBar");
+        const statusLabel = document.getElementById("goalStatusLabel");
+
+        percentDisplay.innerText = expPercent + "%";
+        bar.style.width = Math.min(100, expPercent) + "%";
+
+        if (data.kpi.out > targetPengeluaran) {
+          bar.className =
+            "progress-bar bg-danger progress-bar-striped progress-bar-animated shadow-sm";
+          statusLabel.innerText = "OVER BUDGET! ⚠️";
+          statusLabel.className =
+            "badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-black";
+        } else {
+          bar.className =
+            "progress-bar bg-primary progress-bar-striped progress-bar-animated shadow-sm";
+          statusLabel.innerText = "BUDGET AMAN ✅";
+          statusLabel.className =
+            "badge rounded-pill bg-success-subtle text-success px-3 py-2 fw-black";
+        }
+
+        // AI Insights
+        const insCont = document.getElementById("aiInsights");
+        let insHtml = "";
+        const savingRate =
+          data.kpi.in > 0
+            ? (((data.kpi.in - data.kpi.out) / data.kpi.in) * 100).toFixed(0)
+            : 0;
+
+        if (data.kpi.out > targetPengeluaran)
+          insHtml += createInsight(
+            "Budget Limit",
+            `Melebihi target sebesar ${formatIDR(data.kpi.out - targetPengeluaran)}`,
+            "danger",
+            "bi-exclamation-triangle-fill",
+          );
+        else
+          insHtml += createInsight(
+            "Sisa Kuota",
+            `Hemat ${formatIDR(targetPengeluaran - data.kpi.out)} dari limit`,
+            "success",
+            "bi-shield-fill-check",
+          );
+
+        if (savingRate > 20)
+          insHtml += createInsight(
+            "Saving Power",
+            `Tabungan Anda ${savingRate}%, Sangat Sehat!`,
+            "primary",
+            "bi-piggy-bank-fill",
+          );
+        else
+          insHtml += createInsight(
+            "Saving Power",
+            `Tabungan rendah (${savingRate}%), perlu evaluasi.`,
+            "warning",
+            "bi-lightning-fill",
+          );
+
+        const categories = Object.keys(data.category);
+        if (categories.length > 0) {
+          const topCat = categories.reduce((a, b) =>
+            data.category[a] > data.category[b] ? a : b,
+          );
+          insHtml += createInsight(
+            "Fokus Utama",
+            `Biaya tertinggi di: ${topCat}`,
+            "info",
+            "bi-graph-up-arrow",
+          );
+        }
+        insCont.innerHTML = insHtml;
+
+        // Health Score
+        const hb = document.getElementById("healthBadge");
+        const ratio = data.kpi.in > 0 ? data.kpi.out / data.kpi.in : 1;
+        if (ratio < 0.5) {
+          hb.className = "health-badge bg-success text-white";
+          hb.innerText = "EXCELLENT";
+        } else if (ratio < 0.8) {
+          hb.className = "health-badge bg-info text-white";
+          hb.innerText = "GOOD";
+        } else {
+          hb.className = "health-badge bg-danger text-white";
+          hb.innerText = "CRITICAL";
+        }
+
+        // Recent List & Top Expenses
+        document.getElementById("recentList").innerHTML = data.recent
+          .map(
+            (t) => `
+      <tr>
+        <td class="px-4 py-3 opacity-50">${t.tgl}</td>
+        <td class="py-3 uppercase">${t.sub}</td>
+        <td class="py-3 opacity-50">${t.cat}</td>
+        <td class="py-3"><span class="badge ${t.tipe === "Pemasukan" ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger"} rounded-pill">${t.tipe}</span></td>
+        <td class="px-4 py-3 text-end fw-black ${t.tipe === "Pemasukan" ? "text-success" : "text-danger"}">${formatIDR(t.val)}</td>
+      </tr>`,
+          )
+          .join("");
+
+        const topExpenses = [...data.recent]
+          .filter((t) => t.tipe === "Pengeluaran")
+          .sort((a, b) => b.val - a.val)
+          .slice(0, 10);
+        document.getElementById("topExpensesList").innerHTML =
+          topExpenses
+            .map(
+              (t, i) => `
+      <div class="top-expense-item">
+        <div class="small fw-bold uppercase"><span class="opacity-25 me-1">#${i + 1}</span> ${t.sub}</div>
+        <span class="small text-danger fw-black italic">${formatIDR(t.val)}</span>
+      </div>
+    `,
+            )
+            .join("") ||
+          '<div class="text-center py-4 text-muted small">Belum ada data</div>';
+
+        // Charts
+        const days = Array.from({ length: 31 }, (_, i) => i + 1);
+        const dataInHarian = days.map((d) => data.dailyIn[d] || 0);
+        const dataOutHarian = days.map((d) => data.dailyOut[d] || 0);
+
+        drawChart(
+          "lineChart",
+          "line",
+          days,
+          [
+            {
+              label: "Pemasukan",
+              data: dataInHarian,
+              borderColor: "#10b981",
+              backgroundColor: "rgba(16, 185, 129, 0.1)",
+              fill: true,
+              tension: 0.4,
+              borderWidth: 4,
+              pointRadius: 0,
+            },
+            {
+              label: "Pengeluaran",
+              data: dataOutHarian,
+              borderColor: "#ef4444",
+              backgroundColor: "rgba(239, 68, 68, 0.1)",
+              fill: true,
+              tension: 0.4,
+              borderWidth: 4,
+              pointRadius: 0,
+            },
           ],
-          correct: 1,
-          feedback:
-            "Benar! Aturan Kosinus digunakan untuk mencari sudut jika ketiga sisi diketahui.",
-        },
-        {
-          q: "Jika dalam segitiga ABC diketahui a=4, b=4, dan sudut C=60°, maka jenis segitiga tersebut adalah...",
-          options: ["Siku-siku", "Sembarang", "Sama Sisi", "Sama Kaki"],
-          correct: 2,
-          feedback:
-            "Benar! Dengan aturan kosinus, sisi c juga akan bernilai 4.",
-        },
-      ];
+          textColor,
+          gridColor,
+        );
 
-      let currentQ = 0;
-      let score = 0;
+        drawChart(
+          "pieCategory",
+          "doughnut",
+          Object.keys(data.category),
+          [
+            {
+              data: Object.values(data.category),
+              backgroundColor: [
+                "#4361ee",
+                "#10b981",
+                "#f59e0b",
+                "#ef4444",
+                "#7b61ff",
+              ],
+              borderWidth: 0,
+            },
+          ],
+          textColor,
+        );
 
-      function renderQuestion() {
-        const q = questions[currentQ];
-        document.getElementById("q-text").innerText = q.q;
-        const optDiv = document.getElementById("options");
-        optDiv.innerHTML = "";
-        q.options.forEach((opt, index) => {
-          const btn = document.createElement("button");
-          btn.className =
-            "w-full text-left p-4 rounded-xl border border-slate-200 hover:bg-indigo-50 hover:border-indigo-300 transition";
-          btn.innerText = opt;
-          btn.onclick = () => checkAnswer(index);
-          optDiv.appendChild(btn);
+        drawChart(
+          "historyChart",
+          "bar",
+          data.history.map((h) => h.label),
+          [
+            {
+              label: "Masuk",
+              data: data.history.map((h) => h.in),
+              backgroundColor: "#10b981",
+              borderRadius: 8,
+            },
+            {
+              label: "Keluar",
+              data: data.history.map((h) => h.out),
+              backgroundColor: "#ef4444",
+              borderRadius: 8,
+            },
+          ],
+          textColor,
+          gridColor,
+        );
+      }
+
+      function createInsight(title, text, color, icon) {
+        return `<div class="col-md-4">
+              <div class="insight-pill">
+                <div class="header-icon bg-${color} text-white shadow-sm"><i class="bi ${icon}"></i></div>
+                <div>
+                  <div class="fw-black small text-uppercase tracking-tighter">${title}</div>
+                  <div class="text-muted" style="font-size:0.75rem">${text}</div>
+                </div>
+              </div>
+            </div>`;
+      }
+
+      function drawChart(id, type, labels, datasets, textColor, gridColor) {
+        const ctx = document.getElementById(id);
+        if (!ctx) return;
+        if (charts[id]) charts[id].destroy();
+        charts[id] = new Chart(ctx, {
+          type: type,
+          data: { labels, datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 0 },
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: {
+                  color: textColor,
+                  font: { size: 10, weight: "bold" },
+                  usePointStyle: true,
+                  padding: 15,
+                },
+              },
+              tooltip: { cornerRadius: 10, padding: 12 },
+            },
+            scales:
+              type === "line" || type === "bar"
+                ? {
+                    y: {
+                      beginAtZero: true,
+                      grid: { color: gridColor, drawBorder: false },
+                      ticks: {
+                        color: textColor,
+                        font: { size: 9, weight: "bold" },
+                      },
+                    },
+                    x: {
+                      grid: { display: false },
+                      ticks: {
+                        color: textColor,
+                        font: { size: 9, weight: "bold" },
+                      },
+                    },
+                  }
+                : {},
+          },
         });
       }
+      // --- LOGIKA UTAMA TANYA AI ---
 
-      function checkAnswer(idx) {
-        const q = questions[currentQ];
-        if (idx === q.correct) {
-          score++;
-          alert("Tepat! " + q.feedback);
-        } else {
-          alert("Kurang tepat. " + q.feedback);
-        }
-
-        currentQ++;
-        if (currentQ < questions.length) {
-          renderQuestion();
-        } else {
-          showResult();
+      // 1. Fungsi Buka/Tutup Jendela Chat
+      function toggleChat() {
+        const chatBox = document.getElementById("chatBox");
+        if (chatBox) {
+          chatBox.classList.toggle("d-none");
         }
       }
 
-      function showResult() {
-        document.getElementById("question-area").classList.add("hidden");
-        document.getElementById("result-area").classList.remove("hidden");
-        document.getElementById("score-text").innerText =
-          `Skor Anda: ${score} / ${questions.length}`;
+      // 2. Fungsi Deteksi Tombol Enter pada Input
+      function handleChatKey(event) {
+        if (event.key === "Enter") {
+          sendChat();
+        }
       }
 
-      function restartQuiz() {
-        currentQ = 0;
-        score = 0;
-        document.getElementById("question-area").classList.remove("hidden");
-        document.getElementById("result-area").classList.add("hidden");
-        renderQuestion();
+      // 3. Fungsi Utama Mengirim & Memproses Pesan
+
+      function sendChat() {
+        const input = document.getElementById("userInput");
+        const chatMessages = document.getElementById("chatMessages");
+        const text = input.value.trim();
+
+        if (!text) return;
+
+        // Tampilkan pesan User
+        chatMessages.innerHTML += `<div class="msg-user shadow-sm">${text}</div>`;
+        input.value = "";
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Tampilkan loading sementara
+        const loadingId = "loading-" + Date.now();
+        chatMessages.innerHTML += `<div id="${loadingId}" class="msg-bot">Sedang berpikir...</div>`;
+
+        // Panggil fungsi Server (Google Apps Script)
+        google.script.run
+          .withSuccessHandler(function (jawabanAI) {
+            document.getElementById(loadingId).innerHTML = jawabanAI;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          })
+          .chatDenganAI(text);
       }
 
-      function toggleMenu() {
-        // Logika mobile menu bisa ditambahkan di sini
-        alert("Menu Navigasi Mobile");
+      // 4. Brain/Otak AI: Menghitung Data Real-time
+      function prosesLogikaAI(pesan) {
+        // Ambil data transaksi terbaru (Asumsi variabel global: transactions)
+        // Jika Anda menggunakan nama variabel lain, silakan ganti 'transactions' di bawah
+        const dataAktif =
+          typeof transactions !== "undefined" ? transactions : [];
+
+        let pemasukan = 0;
+        let pengeluaran = 0;
+        let pengeluaranHariIni = 0;
+
+        const hariIni = new Date().toISOString().split("T")[0]; // Format YYYY-MM-DD
+
+        dataAktif.forEach((t) => {
+          const nominal = parseFloat(t.jumlah) || 0;
+          if (t.tipe === "Pemasukan") {
+            pemasukan += nominal;
+          } else {
+            pengeluaran += nominal;
+            if (t.tanggal === hariIni) {
+              pengeluaranHariIni += nominal;
+            }
+          }
+        });
+
+        const saldo = pemasukan - pengeluaran;
+
+        // Helper Format Rupiah
+        const formatRp = (num) =>
+          new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            minimumFractionDigits: 0,
+          }).format(num);
+
+        // --- LOGIKA JAWABAN BERDASARKAN KATA KUNCI ---
+
+        if (pesan.includes("saldo") || pesan.includes("sisa uang")) {
+          return `Sisa saldo Anda saat ini adalah **${formatRp(saldo)}**.`;
+        }
+
+        if (pesan.includes("pengeluaran hari ini")) {
+          return `Total belanja Anda hari ini sebesar **${formatRp(pengeluaranHariIni)}**.`;
+        }
+
+        if (
+          pesan.includes("total pengeluaran") ||
+          pesan.includes("habis berapa")
+        ) {
+          return `Total seluruh pengeluaran Anda yang tercatat adalah **${formatRp(pengeluaran)}**.`;
+        }
+
+        if (pesan.includes("makan")) {
+          const makan = dataAktif
+            .filter((t) => t.kategori === "Makanan")
+            .reduce((a, b) => a + parseFloat(b.jumlah), 0);
+          return `Anda sudah menghabiskan **${formatRp(makan)}** khusus untuk kategori Makanan.`;
+        }
+
+        if (pesan.includes("halo") || pesan.includes("hai")) {
+          return "Halo! Saya Asisten AI Aji Finance. Saya bisa memberi tahu saldo, pengeluaran hari ini, atau rincian kategori Anda. Mau cek apa?";
+        }
+
+        // Jawaban Default jika tidak paham
+        return "Maaf, saya belum mengerti. Coba tanya: **'Berapa saldo saya?'** atau **'Pengeluaran hari ini'**.";
+      }
+      window.onload = () => {
+        const months = [
+          "Januari",
+          "Februari",
+          "Maret",
+          "April",
+          "Mei",
+          "Juni",
+          "Juli",
+          "Agustus",
+          "September",
+          "Oktober",
+          "November",
+          "Desember",
+        ];
+        const selMonth = document.getElementById("selMonth");
+        months.forEach((m, i) => selMonth.add(new Option(m, i)));
+        const n = new Date();
+        selMonth.value = n.getMonth();
+        document.getElementById("selYear").value = n.getFullYear();
+        document.getElementById("formTgl").valueAsDate = n;
+        applyTheme(localStorage.getItem("aji_theme") || "light");
+      };
+
+      function exportToPDF() {
+        if (!currentRawData) {
+          alert("Data belum tersedia");
+          return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF("p", "pt", "a4");
+
+        const data = currentRawData;
+        const totalPemasukan = data.kpi.in;
+        const totalPengeluaran = data.kpi.out;
+        const saldoBersih = totalPemasukan - totalPengeluaran;
+        const isOver = totalPengeluaran > targetPengeluaran;
+
+        const bulan =
+          document.getElementById("selMonth").options[
+            document.getElementById("selMonth").selectedIndex
+          ].text;
+        const tahun = document.getElementById("selYear").value;
+
+        const today = new Date().toLocaleDateString("id-ID");
+
+        const xText = 40;
+
+        // =========================
+        // 1. HEADER / KOP
+        // =========================
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(22);
+        doc.setTextColor(26, 35, 126);
+        doc.text("AJI FINANCE MANAGER", xText, 65);
+
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(100);
+        doc.text(" Solusi Manajemen Keuangan Mandiri", xText, 80);
+        doc.text(
+          "Jl. Sudirman No. 123, Garut | Telp: (085) 860-225-854",
+          xText,
+          93,
+        );
+
+        doc.setDrawColor(26, 35, 126);
+        doc.setLineWidth(2);
+        doc.line(40, 115, 555, 115);
+
+        // =========================
+        // 2. JUDUL LAPORAN
+        // =========================
+        doc.setFontSize(16);
+        doc.setTextColor(0);
+        doc.setFont("helvetica", "bold");
+        doc.text("LAPORAN ARUS KAS BULANAN", 40, 155);
+
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Periode Laporan: ${bulan} ${tahun}`, 40, 175);
+        doc.text(`Tanggal Cetak: ${today}`, 40, 190);
+
+        // =========================
+        // 3. TABEL RINGKASAN
+        // =========================
+        const summaryBody = [
+          ["Total Pemasukan", formatIDR(totalPemasukan)],
+          ["Total Pengeluaran", formatIDR(totalPengeluaran)],
+          ["Target Pengeluaran Bulanan", formatIDR(targetPengeluaran)],
+          ["Status Budget", isOver ? "OVER BUDGET" : "AMAN"],
+          ["Saldo Bersih", formatIDR(saldoBersih)],
+        ];
+
+        doc.autoTable({
+          startY: 215,
+          head: [["Deskripsi Arus Kas", "Total Nilai / Keterangan"]],
+          body: summaryBody,
+          theme: "grid",
+          headStyles: { fillColor: [33, 37, 41], halign: "left", fontSize: 11 },
+          styles: { cellPadding: 8, fontSize: 10 },
+          columnStyles: {
+            0: { cellWidth: 300 },
+            1: { halign: "right" },
+          },
+          didParseCell: function (dataCell) {
+            if (dataCell.section === "body" && dataCell.row.index === 3) {
+              dataCell.cell.styles.fillColor = isOver
+                ? [255, 235, 238]
+                : [232, 245, 233];
+              dataCell.cell.styles.textColor = isOver
+                ? [198, 40, 40]
+                : [46, 125, 50];
+            }
+          },
+          margin: { left: 40, right: 40 },
+        });
+
+        // =========================
+        // 4. RINCIAN TRANSAKSI
+        // =========================
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        doc.setTextColor(0);
+        doc.text("Rincian Transaksi:", 40, doc.lastAutoTable.finalY + 35);
+
+        const detailRows = data.recent.map((t) => [
+          t.tgl,
+          t.sub,
+          t.cat,
+          t.tipe,
+          formatIDR(t.val),
+        ]);
+
+        doc.autoTable({
+          startY: doc.lastAutoTable.finalY + 50,
+          head: [["Tanggal", "Keterangan", "Kategori", "Status", "Jumlah"]],
+          body: detailRows,
+          theme: "striped",
+          headStyles: { fillColor: [60, 60, 60], fontSize: 10 },
+          styles: { fontSize: 9, cellPadding: 8 },
+          columnStyles: { 4: { halign: "right" } },
+          margin: { left: 40, right: 40 },
+        });
+
+        // =========================
+        // 5. FOOTER
+        // =========================
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+          doc.setPage(i);
+          doc.setFontSize(8);
+          doc.setTextColor(150);
+          doc.text("Halaman " + i + " dari " + pageCount, 480, 810);
+          doc.text(
+            "Dokumen ini dihasilkan otomatis oleh Sistem Aji Finance",
+            40,
+            810,
+          );
+        }
+
+        doc.save(`Laporan_Aji_Finance_${bulan}_${tahun}.pdf`);
       }
     </script>
   </body>
